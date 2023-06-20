@@ -1,0 +1,69 @@
+#include <stdio.h>
+
+#define MAX_FRAMES 3
+#define MAX_PAGES 10
+
+void printPageTable(int pageTable[], int n) {
+    printf("Page Table: ");
+    for (int i = 0; i < n; ++i) {
+        printf("%d ", pageTable[i]);
+    }
+    printf("\n");
+}
+
+int isPageFault(int pageTable[], int n, int page) {
+    for (int i = 0; i < n; ++i) {
+        if (pageTable[i] == page) {
+            return 0;  // Page found in the page table, no page fault
+        }
+    }
+    return 1;  // Page not found in the page table, page fault
+}
+
+int getLeastUsedPageIndex(int pageTable[], int accessCount[], int n) {
+    int leastUsedIndex = 0;
+    for (int i = 1; i < n; ++i) {
+        if (accessCount[i] < accessCount[leastUsedIndex]) {
+            leastUsedIndex = i;  // Update the index of the least used page
+        }
+    }
+    return leastUsedIndex;
+}
+
+void luPageReplacement(int pages[], int n) {
+    int pageTable[MAX_FRAMES] = {-1};  // Initialize the page table with -1 (empty frame)
+    int accessCount[MAX_FRAMES] = {0};  // Initialize the access count for each frame
+    int pageFaults = 0;
+
+    for (int i = 0; i < n; ++i) {
+        if (isPageFault(pageTable, MAX_FRAMES, pages[i])) {
+            int leastUsedIndex = getLeastUsedPageIndex(pageTable, accessCount, MAX_FRAMES);
+            pageTable[leastUsedIndex] = pages[i];
+            accessCount[leastUsedIndex] = 1;  // Reset the access count for the replaced page
+            pageFaults++;
+        } else {
+            int pageIndex = getPageIndex(pageTable, MAX_FRAMES, pages[i]);
+            accessCount[pageIndex]++;  // Increment the access count for the accessed page
+        }
+        printPageTable(pageTable, MAX_FRAMES);
+    }
+
+    printf("\nTotal Page Faults: %d\n", pageFaults);
+}
+
+int main() {
+    int pages[MAX_PAGES];
+    int numberOfPages;
+
+    printf("Enter the number of pages (max %d): ", MAX_PAGES);
+    scanf("%d", &numberOfPages);
+
+    printf("Enter the page references: ");
+    for (int i = 0; i < numberOfPages; ++i) {
+        scanf("%d", &pages[i]);
+    }
+
+    luPageReplacement(pages, numberOfPages);
+
+    return 0;
+}
