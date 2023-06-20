@@ -1,0 +1,32 @@
+In Linux, file access permissions define the level of access and permissions granted to different types of users for a file or directory. There are three types of users associated with file access permissions in Linux:
+
+1. Owner (User): The owner is the user who owns the file or directory. They have the highest level of control over the file and can modify its permissions, read, write, or execute it.
+
+2. Group: Each file or directory in Linux is associated with a group. Users who belong to the group have permissions defined for that group. Group permissions allow multiple users to have similar access to files or directories.
+
+3. Other (World): This category includes all other users who do not fall into the owner or group category. Other users may have different permissions compared to the owner and group.
+
+File Access Permissions:
+The file access permissions in Linux are represented by a set of three permissions for each category: read (r), write (w), and execute (x). The permissions can be assigned as follows:
+
+- Read (r): Allows a user to view the contents of a file or list the contents of a directory.
+- Write (w): Allows a user to modify or delete a file or add, delete, or rename files in a directory.
+- Execute (x): Allows a user to execute a file (if it is a program or script) or access a directory.
+
+The file access permissions are displayed using the ls -l command, which shows the permissions in the following format:
+
+```
+-rw-r--r--  1 user group  4096 Jun 20 15:25 myfile.txt
+```
+
+In this example, "rw-" indicates read and write permissions for the owner (user), "r--" indicates read-only permissions for the group, and "r--" indicates read-only permissions for other users (world).
+
+To modify file access permissions, the chmod command is used in Linux. For example, to give the group write access to a file, you can use the following command:
+
+```
+chmod g+w myfile.txt
+```
+
+Similarly, you can modify permissions for the owner, group, or other users using the respective symbols: u (user), g (group), o (other), or a (all).
+
+It's important to set appropriate file access permissions to ensure the security and integrity of files and directories in Linux systems.
