@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_REQUESTS 100
+#define DIRECTION_LEFT 0
+#define DIRECTION_RIGHT 1
+
+void scanDiskScheduling(int requests[], int numRequests, int initialPosition, int totalTracks) {
+    int currentPos = initialPosition;
+    int totalDistance = 0;
+    int direction = DIRECTION_RIGHT;
+
+    bool visited[totalTracks];
+    for (int i = 0; i < totalTracks; i++) {
+        visited[i] = false;
+    }
+
+    visited[currentPos] = true;
+
+    printf("Sequence: %d", currentPos);
+
+    while (true) {
+        if (direction == DIRECTION_RIGHT) {
+            for (int i = currentPos + 1; i < totalTracks; i++) {
+                if (!visited[i]) {
+                    int distance = abs(i - currentPos);
+                    totalDistance += distance;
+                    currentPos = i;
+                    visited[i] = true;
+                    printf(" -> %d", currentPos);
+                }
+            }
+            direction = DIRECTION_LEFT;
+        } else {
+            for (int i = currentPos - 1; i >= 0; i--) {
+                if (!visited[i]) {
+                    int distance = abs(i - currentPos);
+                    totalDistance += distance;
+                    currentPos = i;
+                    visited[i] = true;
+                    printf(" -> %d", currentPos);
+                }
+            }
+            direction = DIRECTION_RIGHT;
+        }
+
+        bool allVisited = true;
+        for (int i = 0; i < totalTracks; i++) {
+            if (!visited[i]) {
+                allVisited = false;
+                break;
+            }
+        }
+
+        if (allVisited) {
+            break;
+        }
+    }
+
+    printf("\nTotal Head Movement: %d\n", totalDistance);
+}
+
+int main() {
+    int numRequests;
+    int requests[MAX_REQUESTS];
+    int initialPosition;
+    int totalTracks;
+
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &numRequests);
+
+    if (numRequests <= 0 || numRequests > MAX_REQUESTS) {
+        printf("Invalid number of requests.\n");
+        return 0;
+    }
+
+    printf("Enter the disk requests: ");
+    for (int i = 0; i < numRequests; i++) {
+        scanf("%d", &requests[i]);
+    }
+
+    printf("Enter the initial head position: ");
+    scanf("%d", &initialPosition);
+
+    printf("Enter the total number of tracks: ");
+    scanf("%d", &totalTracks);
+
+    scanDiskScheduling(requests, numRequests, initialPosition, totalTracks);
+
+    return 0;
+}
