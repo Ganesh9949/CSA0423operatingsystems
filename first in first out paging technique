@@ -1,0 +1,64 @@
+#include <stdio.h>
+
+#define MAX_FRAMES 3
+#define MAX_PAGES 10
+
+void printPageTable(int pageTable[], int n) {
+    printf("Page Table: ");
+    for (int i = 0; i < n; ++i) {
+        printf("%d ", pageTable[i]);
+    }
+    printf("\n");
+}
+
+int isPageFault(int pageTable[], int n, int page) {
+    for (int i = 0; i < n; ++i) {
+        if (pageTable[i] == page) {
+            return 0;  // Page found in the page table, no page fault
+        }
+    }
+    return 1;  // Page not found in the page table, page fault
+}
+
+int getPageIndex(int pageTable[], int n, int page) {
+    for (int i = 0; i < n; ++i) {
+        if (pageTable[i] == page) {
+            return i;  // Return the index of the page in the page table
+        }
+    }
+    return -1;  // Page not found in the page table
+}
+
+void fifoPageReplacement(int pages[], int n) {
+    int pageTable[MAX_FRAMES] = {-1};  // Initialize the page table with -1 (empty frame)
+    int pageFaults = 0;
+    int currentIndex = 0;  // Current index in the page table
+
+    for (int i = 0; i < n; ++i) {
+        if (isPageFault(pageTable, MAX_FRAMES, pages[i])) {
+            pageTable[currentIndex] = pages[i];
+            currentIndex = (currentIndex + 1) % MAX_FRAMES;  // Move to the next frame in a circular manner
+            pageFaults++;
+        }
+        printPageTable(pageTable, MAX_FRAMES);
+    }
+
+    printf("\nTotal Page Faults: %d\n", pageFaults);
+}
+
+int main() {
+    int pages[MAX_PAGES];
+    int numberOfPages;
+
+    printf("Enter the number of pages (max %d): ", MAX_PAGES);
+    scanf("%d", &numberOfPages);
+
+    printf("Enter the page references: ");
+    for (int i = 0; i < numberOfPages; ++i) {
+        scanf("%d", &pages[i]);
+    }
+
+    fifoPageReplacement(pages, numberOfPages);
+
+    return 0;
+}
