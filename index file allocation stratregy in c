@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_FILES 10
+#define MAX_BLOCKS 50
+
+typedef struct {
+    int fileId;
+    int indexBlock;
+    int size;
+} File;
+
+File fileTable[MAX_FILES];
+int fileCount = 0;
+
+int dataBlocks[MAX_BLOCKS];
+int dataBlockCount = 0;
+
+void createFile(int fileId, int size) {
+    if (fileCount >= MAX_FILES) {
+        printf("Cannot create more files. File table is full.\n");
+        return;
+    }
+
+    if (size <= 0) {
+        printf("Invalid file size.\n");
+        return;
+    }
+
+    File newFile;
+    newFile.fileId = fileId;
+    newFile.size = size;
+
+    // Allocate an index block for the file
+    if (dataBlockCount >= MAX_BLOCKS) {
+        printf("Cannot allocate an index block. Data block space is full.\n");
+        return;
+    }
+    newFile.indexBlock = dataBlockCount++;
+
+    // Add the file to the file table
+    fileTable[fileCount++] = newFile;
+
+    printf("File created successfully. File ID: %d\n", fileId);
+}
+
+void deleteFile(int fileId) {
+    int fileIndex = -1;
+
+    // Find the file index in the file table
+    for (int i = 0; i < fileCount; ++i) {
+        if (fileTable[i].fileId == fileId) {
+            fileIndex = i;
+            break;
+        }
+    }
+
+    if (fileIndex == -1) {
+        printf("File not found.\n");
+        return;
+    }
+
+    // Clear the file table entry
+    fileTable[fileIndex].fileId = 0;
+
+    // Deallocate the index block
+    int indexBlock = fileTable[fileIndex].indexBlock;
+    dataBlocks[indexBlock] = 0;
+
+    printf("File deleted successfully. File ID: %d\n", fileId);
+}
+
+void displayFileTable() {
+    printf("File Table:\n");
+    printf("File ID\tIndex Block\tSize\n");
+    for (int i = 0; i < fileCount; ++i) {
+        printf("%d\t%d\t\t%d\n", fileTable[i].fileId, fileTable[i].indexBlock, fileTable[i].size);
+    }
+}
+
+int main() {
+    int choice;
+    int fileId, size;
+
+    while (1) {
+        printf("\nFile Allocation - Indexed Block\n");
+        printf("1. Create File\n");
+        printf("2. Delete File\n");
+        printf("3. Display File Table\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the File ID: ");
+                scanf("%d", &fileId);
+                printf("Enter the File Size: ");
+                scanf("%d", &size);
+                createFile(fileId, size);
+                break;
+            case 2:
+                printf("Enter the File ID: ");
+                scanf("%d", &fileId);
+                deleteFile(fileId);
+                break;
+            case 3:
+                displayFileTable();
+                break;
+            case 4:
+                exit(0);
+            default:
+                printf("Invalid choice. Please try again.\n");
